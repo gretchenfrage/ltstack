@@ -1,0 +1,28 @@
+input pref_buf_0_size
+input type T
+
+buf_0_exp = {
+    e = 0;
+    do {
+        e++;
+    } until (size_of(T) * (0b1 << e) > pref_buf_0_size);
+    e - 1
+}
+
+bufs: Vec<Vec<T>>
+
+fn set(elem_i, elem: T) {
+    buf_unit_i = elem_i >> buf_0_exp
+    buf_tier = {
+        t = 0;
+        tmp = buf_unit_i;
+        do {
+            t++;
+            tmp >>= 1;
+        } until (tmp == 0);
+        t - 1
+    }
+    //buf_exp = buf_0_exp << buf_tier;
+    buf_elem_i = elem_i >> buf_tier;
+    bufs[buf_tier][buf_elem_i] = elem;
+}
