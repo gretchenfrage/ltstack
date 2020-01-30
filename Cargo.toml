@@ -1,0 +1,4 @@
+[workspace]
+members = [
+  "pow_of_2"
+]
