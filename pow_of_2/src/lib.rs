@@ -1,4 +1,4 @@
-#![feature(trace_macros)]
+
 use std::{
     u8,
     ops::{Shl, Mul, Div, MulAssign, DivAssign},
@@ -176,16 +176,23 @@ impl<T: UInt> DivAssign<Two> for PowOf2<T> {
 // ==== power of 2 constants ====
 
 macro_rules! pow_of_2_consts {
-    (for $ty:ty {$( ($($t:tt)*) )*})=>{
+    (#[$attr:meta] for $ty:ty {$( ($($t:tt)*) )*})=>{
         $( pow_of_2_consts!(@try_recurse ($($t)*) ); )*
-        pow_of_2_consts!(@items $ty {} {$( ($($t)*) )*});
+        pow_of_2_consts!(@items #[$attr] $ty {} {$( ($($t)*) )*});
     };
     
-    (@items $ty:ty {$($accum:tt)*} 
-            {})=>{ impl PowOf2<$ty> {$($accum)*} };
-    (@items $ty:ty {$($accum:tt)*} 
+    (@items #[$attr:meta] $ty:ty {$($accum:tt)*} 
+            {})=>{ 
+        impl PowOf2<$ty> {$($accum)*}
+        
+        #[$attr] impl PowOf2<usize> {$($accum)*}
+        
+        //#[cfg(target_pointer_width = stringify!($ty))]
+        //impl PowOf2<usize> {$($accum)*}
+    };
+    (@items #[$attr:meta] $ty:ty {$($accum:tt)*} 
             {($name:ident : $exp:expr) $($t:tt)*})=>{
-        pow_of_2_consts!(@items $ty { 
+        pow_of_2_consts!(@items #[$attr] $ty { 
             $($accum)* 
             pub const $name: Self = PowOf2 {
                 exp: $exp,
@@ -193,25 +200,25 @@ macro_rules! pow_of_2_consts {
             };
         } { $($t)* });
     };
-    (@items $ty:ty {$($accum:tt)*} 
-            {(for $ty2:ty {$( ($($t2:tt)*) )*}) $($t:tt)*})=>{
-        pow_of_2_consts!(@items $ty
+    (@items #[$attr:meta] $ty:ty {$($accum:tt)*} 
+            {(#[$attr2:meta] for $ty2:ty {$( ($($t2:tt)*) )*}) $($t:tt)*})=>{
+        pow_of_2_consts!(@items #[$attr] $ty
             {$($accum)*}
             {$( ( $($t2)* ) )* $($t)*});
     };
     
-    (@try_recurse ( for $ty:ty {$( ($($t:tt)*) )*} ))=>{
-        pow_of_2_consts!( for $ty {$( ($( $t )*) )*} );
+    (@try_recurse ( #[$attr:meta] for $ty:ty {$( ($($t:tt)*) )*} ))=>{
+        pow_of_2_consts!( #[$attr] for $ty {$( ($( $t )*) )*} );
     };
     (@try_recurse ( $name:ident : $exp:expr ))=>{};
 }
 
 pow_of_2_consts! {
-    for u128 {
-        (for u64 {
-            (for u32 {
-                (for u16 {
-                    (for u8 {
+    #[cfg(target_pointer_width = "128")] for u128 {
+        (#[cfg(target_pointer_width = "64")] for u64 {
+            (#[cfg(target_pointer_width = "32")] for u32 {
+                (#[cfg(target_pointer_width = "16")] for u16 {
+                    (#[cfg(target_pointer_width = "8")] for u8 {
                         (_1: 0)
                         (_2: 1)
                         (_4: 2)
@@ -231,6 +238,7 @@ pow_of_2_consts! {
             (TEBI: 40)
             (PEBI: 50)
             (EXBI: 60)
+            
         })
         (ZEBI: 70)
         (YOBI: 80)
