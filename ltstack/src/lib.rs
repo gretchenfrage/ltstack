@@ -69,22 +69,6 @@ where
     fn apply(self, top: &'l mut <S as LtEnable<'l>>::Output) -> Self::Iterator;
 }
 
-impl<'l, S, F, I> Borrower<'l, S> for F
-where
-    S: 'static,
-    S: for<'a> LtEnable<'a>,
-    F: FnOnce(&'l mut <S as LtEnable<'l>>::Output) -> I,
-    I: IntoIterator,
-    I::Item: LtDisable<S> + 'l,
-{
-    type Borrowed = I::Item;
-    type Iterator = I;
-    
-    fn apply(self, top: &'l mut <S as LtEnable<'l>>::Output) -> Self::Iterator {
-        self(top)
-    }
-}
-
 impl<'base, S> LtStack<'base, S>
 where
     S: 'static,
