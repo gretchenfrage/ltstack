@@ -1,4 +1,5 @@
 [workspace]
 members = [
-  "pow_of_2"
+  "pow_of_2",
+  "pinbuf",
 ]
