@@ -10,7 +10,9 @@ use std::{
 };
 use pinvec::PinVec;
 
-trait LtDisable<S>: Sized
+// TODO: blanket-impl lt stuff for static types
+
+pub trait LtDisable<S>: Sized
 where
     S: 'static,
     S: for<'a> LtEnable<'a>,
@@ -18,7 +20,7 @@ where
     unsafe fn into_static(self) -> S;
 }
 
-trait LtEnable<'o>: Sized {
+pub trait LtEnable<'o>: Sized {
     type Output: 'o;
     
     unsafe fn give_lifetime(self) -> Self::Output;
@@ -28,17 +30,7 @@ trait LtEnable<'o>: Sized {
     unsafe fn give_lifetime_mut<'s>(&'s mut self) -> &'s mut Self::Output;
 }
 
-struct LtStack<'base, S>
-where
-    S: 'static,
-    S: for<'a> LtEnable<'a>
-{
-    vec: PinVec<UnsafeCell<S>>,
-    
-    p: std::marker::PhantomData<&'base ()>,
-}
-
-trait Borrower<'l, S>: Sized
+pub trait Borrower<'l, S>: Sized
 where
     S: 'static,
     S: for<'a> LtEnable<'a>
@@ -49,6 +41,16 @@ where
     fn apply(self, top: &'l mut <S as LtEnable<'l>>::Output) -> Self::Iterator;
 }
 
+pub struct LtStack<'base, S>
+where
+    S: 'static,
+    S: for<'a> LtEnable<'a>
+{
+    vec: PinVec<UnsafeCell<S>>,
+    
+    p: std::marker::PhantomData<&'base ()>,
+}
+
 impl<'base, S> LtStack<'base, S>
 where
     S: 'static,
@@ -56,27 +58,27 @@ where
 {
     // == constructors ==
 
-    fn empty() -> Self {
+    pub fn empty() -> Self {
         LtStack { vec: PinVec::default(), p: std::marker::PhantomData }
     }
     
     // == mutators ==
     
-    fn push<E>(&mut self, elem: E)
+    pub fn push<E>(&mut self, elem: E)
     where
         E: LtDisable<S> + 'base,
     {
         unsafe { self.vec.push(UnsafeCell::new(elem.into_static())) };
     }
     
-    fn pop<'s>(&'s mut self) -> Option<<S as LtEnable<'s>>::Output> {
+    pub fn pop<'s>(&'s mut self) -> Option<<S as LtEnable<'s>>::Output> {
         unsafe { 
             self.vec.pop_unchecked().map(|cell| 
                 cell.into_inner().give_lifetime())
         }
     }
     
-    fn grow<F>(&mut self, f: F) -> bool
+    pub fn grow<F>(&mut self, f: F) -> bool
     where
         F: for<'l> Borrower<'l, S>
     {
@@ -102,9 +104,9 @@ where
 
     // == accessors ==
     
-    fn len(&self) -> usize { self.vec.len() }
+    pub fn len(&self) -> usize { self.vec.len() }
     
-    fn top<'s>(&'s mut self) -> Option<&mut <S as LtEnable<'s>>::Output> {
+    pub fn top<'s>(&'s mut self) -> Option<&mut <S as LtEnable<'s>>::Output> {
         match self.vec.len() {
             0 => None,
             l => Some(unsafe {
@@ -116,10 +118,6 @@ where
         }
     }
     
-    
-    
-    // pop
-    // grow
-    // iter (immutable)
+    // iter (immutable), index (immutable)
 }
 
