@@ -1,4 +1,7 @@
 
+#[cfg(test)]
+mod tests;
+
 use std::{
     u8,
     ops::{Shl, Mul, Div, MulAssign, DivAssign},
