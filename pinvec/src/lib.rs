@@ -112,21 +112,57 @@ impl<T> PinVec<T> {
         let top_buffer = &mut self.buffers[top_buffer_i];
         
         // remove top element
-        debug_assert!(top_buffer.len() > 1);
+        debug_assert!(top_buffer.len() > 0);
         top_buffer.remove_top();
         
         // potentially remove top buffer
         // (in addition to reducing memory footprint, other
         //  assertions rely on the invariant that all 
         //  buffers will be nonempty of elements)
-        if top_buffer.len() == 0 {
-            self.buffers.pop();
-        }
+        if top_buffer.len() == 0 { self.buffers.pop(); }
         
         // maintain tracking data
         self.len -= 1;
         
         true
+    }
+    
+    /// Pop and return the top element.
+    ///
+    /// Only possible if the element type is `Unpin`.
+    pub fn pop(&mut self) -> Option<T> 
+    where T: Unpin {
+        // mostly copy of PinVec::remove_top
+        
+        if self.len == 0 { return None; }
+        let top_buffer_i = self.buffers.len() - 1;
+        let top_buffer = &mut self.buffers[top_buffer_i];
+        
+        debug_assert!(top_buffer.len() > 0);
+        let output = top_buffer.pop();
+        
+        if top_buffer.len() == 0 { self.buffers.pop(); }
+        self.len -= 1;
+        
+        output
+    }
+    
+    /// Pop and return the top element, ignoring `Pin` 
+    /// invariants.
+    pub unsafe fn pop_unchecked(&mut self) -> Option<T> {
+        // mostly copy of PinVec::remove_top
+        
+        if self.len == 0 { return None; }
+        let top_buffer_i = self.buffers.len() - 1;
+        let top_buffer = &mut self.buffers[top_buffer_i];
+        
+        debug_assert!(top_buffer.len() > 0);
+        let output = top_buffer.pop_unchecked();
+        
+        if top_buffer.len() == 0 { self.buffers.pop(); }
+        self.len -= 1;
+        
+        output
     }
     
     /// Override an existing element.
