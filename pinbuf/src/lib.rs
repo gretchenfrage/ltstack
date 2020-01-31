@@ -3,6 +3,7 @@ use std::{
     pin::Pin,
     marker::Unpin,
     ptr::drop_in_place,
+    mem::replace,
 };
 
 /// Wraps `Vec<T>` and disallows re-allocation.
@@ -68,6 +69,16 @@ impl<T> PinBuffer<T> {
     /// > so no pinning guarantee is violated.
     pub fn set(&mut self, index: usize, elem: T) {
         self.vec[index] = elem;
+    }
+    
+    /// Take and replace an existing element.
+    ///
+    /// Only possible if the element type is `Unpin`.
+    /// 
+    /// Panics on failure.
+    pub fn replace(&mut self, index: usize, repl: T) -> T 
+    where T: Unpin {
+        replace(&mut self.vec[index], repl)
     }
     
     /// Get by index as pinned shared ref, or panic.
