@@ -60,6 +60,12 @@ impl<T> PinBuffer<T> {
         self.vec.pop() 
     }
     
+    /// Pop and return the top element, ignoring `Pin` 
+    /// invariants.
+    pub unsafe fn pop_unchecked(&mut self) -> Option<T> {
+        self.vec.pop()
+    }
+    
     /// Override an existing element.
     ///
     /// Quoting [std::pin::Pin](https://doc.rust-lang.org/std/pin/struct.Pin.html#method.set):
