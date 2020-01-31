@@ -156,3 +156,10 @@ impl<T> PinVec<T> {
         self.buffers[outer].get_mut(inner)
     }
 }
+
+
+impl<T> Default for PinVec<T> {
+    fn default() -> Self {
+        PinVec::new(PowOf2::<usize>::_64)
+    }
+}
