@@ -12,6 +12,15 @@ use std::{
 use pinbuf::PinBuffer;
 use pow_of_2::PowOf2;
 
+/// Growable vec-like with stable memory addresses.
+///
+/// This structure functions similarly to a typical `Vec`.
+/// Whereas a `Vec` increases capacity by moving existing 
+/// elements to a newer, larger buffer, this collection
+/// is backed by a vector of buffers, each twice as big as
+/// the last, and increases capacity by allocating another 
+/// vector for new elements to overflow into, without 
+/// invalidating existing elements.
 pub struct PinVec<T> {
     buffers: Vec<PinBuffer<T>>,
     buf_0_len: PowOf2<usize>,
