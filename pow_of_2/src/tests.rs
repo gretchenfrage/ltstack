@@ -1,6 +1,6 @@
 
 use crate::{PowOf2, Two};
-use std::{
+use core::{
     usize,
     mem::size_of,
 };

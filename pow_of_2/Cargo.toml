@@ -1,7 +1,11 @@
 [package]
 name = "pow_of_2"
 version = "0.1.0"
-authors = ["Phoenix Kahlo <kahlo.phoenix@gmail.com>"]
+authors = ["Phoenix Kahlo <phoenixkahlo.com>"]
 edition = "2018"
+description = "Integer-like types which can only represent powers of 2"
+readme = "README.md"
+categories = ["mathematics", "no-std"]
+license-file = "LICENSE.md"
 
 [dependencies]
