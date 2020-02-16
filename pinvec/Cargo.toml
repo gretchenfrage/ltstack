@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Phoenix Kahlo <kahlo.phoenix@gmail.com>"]
 edition = "2018"
 homepage = "http://phoenixkahlo.com"
-edition = "2018"
 description = "Growable vector-like structure which never moves its contents"
 readme = "README.md"
 categories = ["memory-management"]
