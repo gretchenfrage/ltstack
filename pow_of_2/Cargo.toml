@@ -1,6 +1,6 @@
 [package]
 name = "pow_of_2"
-version = "0.1.1"
+version ="0.1.2"
 authors = ["Phoenix Kahlo <kahlo.phoenix@gmail.com>"]
 homepage = "http://phoenixkahlo.com"
 edition = "2018"
