@@ -1,6 +1,6 @@
 [package]
 name = "pinvec"
-version = "0.1.0"
+version ="0.1.0"
 authors = ["Phoenix Kahlo <kahlo.phoenix@gmail.com>"]
 edition = "2018"
 homepage = "http://phoenixkahlo.com"
@@ -11,4 +11,4 @@ license-file = "LICENSE.md"
 repository = "https://github.com/gretchenfrage/ltstack"
 
 [dependencies]
-pow_of_2 = { path = "../pow_of_2" }
+pow_of_2 = { version = "^0.1.2" }
