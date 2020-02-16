@@ -5,5 +5,4 @@ authors = ["Phoenix Kahlo <kahlo.phoenix@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-pinbuf = { path = "../pinbuf" }
 pow_of_2 = { path = "../pow_of_2" }

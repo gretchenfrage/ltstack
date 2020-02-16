@@ -1,7 +1,6 @@
 [workspace]
 members = [
   "pow_of_2",
-  "pinbuf",
   "pinvec",
   "ltstack",
 ]
